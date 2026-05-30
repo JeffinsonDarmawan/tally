@@ -1,6 +1,6 @@
 # Project Brief: "Tally" — A Group Bill-Splitting App
 
-> **Instructions for Claude Code:** This is the full specification for the app I want you to build. Read the entire document before writing any code. Build it in the **phases** in Section 12, one phase at a time, and pause for my review between phases.
+> **Instructions for the developer:** This is the full specification for the app I want you to build. Read the entire document before writing any code. Build it in the **phases** in Section 12, one phase at a time, and pause for my review between phases.
 >
 > **MANDATORY:** Before writing or editing *any* frontend UI (components, pages, styling, layout), you must **invoke the `frontend-design` skill** and follow it. Re-invoke it at the start of every phase that touches the UI and whenever you create a new screen or major component. The look of this app matters as much as the logic.
 
@@ -311,7 +311,7 @@ Name, category, default payer, frequency (weekly/biweekly/monthly/yearly), **amo
 - **Skip/dismiss** a due instance (advance without posting). Define a **backlog rule** (catch-up prompts vs auto-skip after N missed periods) and handle the anchor day in short months (e.g. the 31st in February).
 - Editing a template affects **future** instances only.
 
-> **Design rationale (for Claude Code):** competitors auto-post recurring expenses on schedule, which inflates balances with money that hasn't actually moved and breaks for fluctuating bills. Confirm-before-posting (and requiring a real amount for variable bills) keeps the ledger accurate. Build it this way intentionally.
+> **Design rationale (for the developer):** competitors auto-post recurring expenses on schedule, which inflates balances with money that hasn't actually moved and breaks for fluctuating bills. Confirm-before-posting (and requiring a real amount for variable bills) keeps the ledger accurate. Build it this way intentionally.
 
 ---
 
