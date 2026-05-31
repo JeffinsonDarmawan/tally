@@ -10,8 +10,8 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 | Phase | Title | Status |
 |---|---|---|
 | — | **Foundation** (VCS, docs, environment) | ✅ |
-| 0 | Scaffold & design system | 🟡 in review |
-| 1 | Auth, members & categories | ⬜ |
+| 0 | Scaffold & design system | ✅ |
+| 1 | Auth, members & categories | 🟡 in review |
 | 2 | Schema & balance engine (unit-tested) | ⬜ |
 | 3 | Add Expense flow | ⬜ |
 | 4 | Dashboard | ⬜ |

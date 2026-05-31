@@ -23,7 +23,7 @@ export function IconPicker({ value, onChange, color = '#9C9CF0', className }: Ic
   }, [query])
 
   return (
-    <div className={cn('flex flex-col gap-3', className)}>
+    <div role="group" aria-label="Icon" className={cn('flex flex-col gap-3', className)}>
       <div className="relative">
         <IconSearch className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-faint" stroke={2} />
         <input
@@ -31,6 +31,7 @@ export function IconPicker({ value, onChange, color = '#9C9CF0', className }: Ic
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search icons…"
+          aria-label="Search icons"
           className="h-10 w-full rounded-xl border border-hairline bg-elevated pr-3 pl-9 text-sm text-ink placeholder:text-faint focus-visible:border-accent/50 focus-visible:outline-none"
         />
       </div>

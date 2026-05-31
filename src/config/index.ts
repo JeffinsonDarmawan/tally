@@ -23,3 +23,9 @@ export const PERSON_COLORS = [
 ] as const
 
 export type PersonColor = (typeof PERSON_COLORS)[number]
+
+/** Shared color palette for category colors and avatar colors. */
+export const PALETTE = [
+  '#9C9CF0', '#74E0A2', '#F4948B', '#6BC8D6', '#E0B35B', '#D199E8',
+  '#7FB5F0', '#F0A6C0', '#8FE0B0', '#E8896B', '#B0A6F0', '#9A9AA2',
+] as const

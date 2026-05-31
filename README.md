@@ -89,9 +89,9 @@ npm install
 # 2. Configure environment
 cp .env.example .env          # then fill in your Supabase URL + anon key
 
-# 3. Set up the database
-#    Supabase → SQL Editor → paste docs/database/supabase_schema.sql → Run
-#    (see docs/database/DATABASE.md for the full first-run steps)
+# 3. Set up the backend (one-time)
+#    Follow docs/SUPABASE_SETUP.md: create a project, run docs/database/supabase_schema.sql,
+#    configure the magic-link redirect URLs, and copy your URL + anon key into .env
 
 # 4. Run the dev server
 npm run dev

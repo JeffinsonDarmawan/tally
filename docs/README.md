@@ -10,6 +10,7 @@ Read this index first to know where to look (and where to write).
 |---|---|---|
 | **Workflow** | [`GIT_WORKFLOW.md`](GIT_WORKFLOW.md) | How we branch, commit, open PRs, and merge to `main`. |
 | **Environment** | [`ENVIRONMENT.md`](ENVIRONMENT.md) | The isolated dev environment: pinned Node, local deps, `.env`. |
+| **Supabase setup** | [`SUPABASE_SETUP.md`](SUPABASE_SETUP.md) | One-time backend setup: create project, run schema, configure auth, fill `.env`. |
 | **Spec** | [`planning/PROJECT_BRIEF.md`](planning/PROJECT_BRIEF.md) | The full product specification — the source of truth. |
 | **Plan** | [`planning/ROADMAP.md`](planning/ROADMAP.md) | The 10 build phases, with a live checklist. |
 | **Status** | [`planning/PROGRESS.md`](planning/PROGRESS.md) | Running work log: what's done, in flight, and next. Read this for context. |

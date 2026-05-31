@@ -7,19 +7,35 @@
 
 ## Current state
 
-- **Phase:** **Phase 0 (Scaffold & design system) — in review.** Foundation complete.
+- **Phase:** **Phase 1 (Auth, members & categories) — in review.** Phase 0 merged (PR #3).
 - **Repo:** `tally` (public, GitHub) · integration branch `main`.
-- **App:** Vite + React + TS + Tailwind v4 + react-router + Supabase client + PWA scaffolded;
-  dark design tokens, component kit, and responsive app shell built and verified.
+- **App:** Auth (magic link), session/group bootstrap + gating, onboarding, profile editing, member
+  management, and categories CRUD — all wired to Supabase with RLS. Needs a live Supabase project to run.
+- **Backend:** the user sets up Supabase (see `docs/SUPABASE_SETUP.md`); code is ready to connect.
 
 ## Next up
 
-1. **Review Phase 0** (PR open). After merge → **Phase 1 — Auth, members & categories**
-   (magic-link login, profiles, single group, membership, seeded + custom categories CRUD, RLS).
+1. **Review Phase 1** (PR open) + do the Supabase setup to test it live. After merge →
+   **Phase 2 — Schema & balance engine** (pure, unit-tested TypeScript; §6). Do this before the
+   dashboard/add-expense screens.
 
 ---
 
 ## Log
+
+### 2026-05-31 — Phase 1 · auth, members & categories (in review)
+- Magic-link auth via Supabase: `AuthProvider`/`useAuth`, branded `LoginPage` (+ "backend not
+  configured" fallback so the app never white-screens without env).
+- Session bootstrap: `GroupProvider` loads profile + group + members; `AppGate` routes
+  loading → splash, signed-out → login, no-group → onboarding, ready → app.
+- Onboarding: create a group (`create_group` RPC, seeds categories) or join via a member code.
+- Settings reworked to real data: profile edit (name + avatar color), members (list + add-by-code),
+  and full categories CRUD (`CategoryManager` + `CategoryFormModal` with icon/color pickers).
+- Hand-authored `src/types/database.types.ts` from the schema; typed the Supabase client.
+- New kit components: `Input`/`Field`, `ColorPicker`, `ConfirmDialog`.
+- Verified: build ✓, lint ✓, tsc ✓; rendered the unconfigured + login-form states in-browser.
+  Authenticated flows (onboarding/settings CRUD) need a live Supabase project to exercise.
+- Wrote `docs/SUPABASE_SETUP.md` (create project, run schema, configure auth redirect, fill `.env`).
 
 ### 2026-05-30 — Phase 0 · scaffold & design system (in review)
 - Invoked the `frontend-design` skill; committed to a "calm fintech, money-as-hero" dark direction.
