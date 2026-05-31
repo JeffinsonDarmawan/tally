@@ -10,7 +10,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 | Phase | Title | Status |
 |---|---|---|
 | — | **Foundation** (VCS, docs, environment) | ✅ |
-| 0 | Scaffold & design system | ⬜ |
+| 0 | Scaffold & design system | 🟡 in review |
 | 1 | Auth, members & categories | ⬜ |
 | 2 | Schema & balance engine (unit-tested) | ⬜ |
 | 3 | Add Expense flow | ⬜ |
@@ -75,3 +75,8 @@ CSV + PDF export. Designed empty states.
 Empty/loading/error states everywhere, finalize PWA (installable, offline shell), responsive +
 a11y pass, deploy to Vercel + Supabase, complete the README.
 **Exit:** the acceptance checklist (§13) is fully ticked and the app is deployed.
+
+**Carried over from earlier reviews (a11y pass):**
+- Modal: focus trap, initial focus on open, and focus-return to the trigger on close.
+- Full WCAG AA color-contrast audit across the dark theme.
+- De-duplicate the two `nav` landmarks (sidebar vs. bottom bar share the same label).
