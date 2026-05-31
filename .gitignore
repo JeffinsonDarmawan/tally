@@ -74,6 +74,7 @@ lerna-debug.log*
 # --- AI / agent tooling artifacts (never commit) ---
 .claude/
 .claude/**
+.playwright-mcp/
 CLAUDE.md
 CLAUDE.local.md
 .cursor/

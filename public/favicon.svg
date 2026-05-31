@@ -1,0 +1,17 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Tally — squircle tile with a tally-mark glyph (four strokes + a diagonal) -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1F1F26"/>
+      <stop offset="1" stop-color="#16161C"/>
+    </linearGradient>
+  </defs>
+  <path d="M32 2C13 2 2 13 2 32s11 30 30 30 30-11 30-30S51 2 32 2Z" fill="url(#tile)" stroke="#23232B" stroke-width="1.5"/>
+  <g stroke="#9C9CF0" stroke-width="4.2" stroke-linecap="round">
+    <line x1="21" y1="20" x2="21" y2="44"/>
+    <line x1="29.5" y1="20" x2="29.5" y2="44"/>
+    <line x1="38" y1="20" x2="38" y2="44"/>
+    <line x1="46.5" y1="20" x2="46.5" y2="44"/>
+    <line x1="17" y1="46" x2="50.5" y2="18"/>
+  </g>
+</svg>

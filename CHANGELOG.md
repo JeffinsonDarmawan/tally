@@ -12,6 +12,17 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Added — Phase 0: Scaffold & design system
+- Scaffolded the app: Vite 8, React 19, TypeScript, Tailwind v4 (CSS-first theme), react-router 7,
+  `@supabase/supabase-js`, `vite-plugin-pwa`, Geist variable font, and Tabler icons.
+- Implemented the dark design tokens and type scale from the brief (§3) as a Tailwind v4 `@theme`.
+- Built the design-system component kit: Button, Card, StatCard, ListRow, Modal (sheet/dialog),
+  SegmentedControl, Avatar (squircle), Chip, CategoryTile, IconPicker, and Empty/Loading/Error states.
+- Built the responsive app shell (desktop sidebar / mobile bottom-tab bar) with routing and the
+  placeholder feature pages.
+- Added project scripts (`dev`, `build`, `lint`, `typecheck`, `test`), ESLint flat config, and the
+  Supabase client wrapper.
+
 ### Added — Project foundation (pre-Phase 0)
 - Initialized the git repository with `main` as the integration branch.
 - Established the documentation structure under `docs/` (planning, architecture, database).
