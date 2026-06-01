@@ -363,4 +363,6 @@ Name, category, default payer, frequency (weekly/biweekly/monthly/yearly), **amo
 
 **Out of scope for v1:** multi-currency / conversion, multiple groups in the UI, **receipt OCR** (photo attach only), and complex permission roles.
 
-**Deliberately deferred (strong v2 candidates):** **PayNow / payment-link settle-up with prefilled QR** (excluded from v1 by choice — high value for a Singapore group, revisit in v2); push notifications beyond in-app/email basics.
+**Deliberately deferred (strong v2 candidates):** **PayNow / payment-link settle-up with prefilled QR** (excluded from v1 by choice — high value for a Singapore group, revisit in v2); push notifications beyond in-app/email basics; **receipt-photo OCR → auto-itemise** (snap a bill and pre-fill the by-item split — a natural extension of v1's photo attach).
+
+> The living future-enhancements list (with detail and priority) is tracked in [`BACKLOG.md`](BACKLOG.md).
