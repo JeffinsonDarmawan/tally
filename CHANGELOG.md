@@ -12,6 +12,19 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Added — Phase 1: Auth, members & categories
+- Magic-link authentication (Supabase Auth) with an `AuthProvider`, a branded login screen, and a
+  "backend not configured" fallback when env vars are missing.
+- Session bootstrap: loads the signed-in user's profile, their single group, and all members; gates
+  the app behind sign-in and group membership with a branded splash/error.
+- Onboarding for users without a group: create a group (seeds default categories via the
+  `create_group` RPC) or join via a shareable member code.
+- Profile editing (display name + avatar color) and member management (list + add-by-code), RLS-safe.
+- Full categories CRUD wired to Supabase (create/edit/delete, icon + color pickers, confirm-on-delete).
+- Hand-authored `database.types.ts` from the schema; typed the Supabase client.
+- New kit components: `Input`/`Field`, `ColorPicker`, `ConfirmDialog`.
+- Added `docs/SUPABASE_SETUP.md` with the one-time backend setup.
+
 ### Added — Phase 0: Scaffold & design system
 - Scaffolded the app: Vite 8, React 19, TypeScript, Tailwind v4 (CSS-first theme), react-router 7,
   `@supabase/supabase-js`, `vite-plugin-pwa`, Geist variable font, and Tabler icons.

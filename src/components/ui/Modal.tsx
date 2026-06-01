@@ -16,6 +16,9 @@ export interface ModalProps {
 /**
  * Modal that presents as a bottom sheet on mobile and a centered dialog on desktop.
  * The container for the multi-step flows (Add Expense, Settle up).
+ *
+ * TODO(Phase 9 a11y): add a focus trap, focus the first control on open, and return
+ * focus to the trigger on close. Tracked in docs/planning/ROADMAP.md (Phase 9).
  */
 export function Modal({ open, onClose, title, footer, children, className }: ModalProps) {
   const titleId = useId()
