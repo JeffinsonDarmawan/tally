@@ -12,6 +12,20 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Added — Phase 2: Balance engine
+- Pure, unit-tested balance engine in `src/lib/balance-engine/` (brief §6), built test-first (54 tests):
+  - **money** — integer-cents conversion + deterministic remainder distribution (§6.5).
+  - **splits** — equal, uneven, weighted shares, percentage, and by-item with tax/tip/service
+    auto-allocation (§8); every method reconciles exactly to the total.
+  - **netting** — per-expense net (paid − owed) → surplus-proportional pairwise debt edges (§6.1),
+    matching the brief's worked example; reduces to the single-payer case.
+  - **balances** — aggregate owe map, settlements, signed `net(a,b)`, dashboard totals (§6.2–6.3),
+    incl. overpayment-as-credit.
+  - **fifo** — unpaid items + days-unpaid applied oldest-first (§6.4).
+  - **simplify** — greedy minimal-transfer debt simplification (§6.6), presentation-only.
+  - **clock** — group-time-zone "today" + month boundaries (§6.7).
+- Added Vitest with a Node-environment config; `npm run test` runs the suite.
+
 ### Added — Phase 1: Auth, members & categories
 - Magic-link authentication (Supabase Auth) with an `AuthProvider`, a branded login screen, and a
   "backend not configured" fallback when env vars are missing.

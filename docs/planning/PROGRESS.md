@@ -7,21 +7,29 @@
 
 ## Current state
 
-- **Phase:** **Phase 1 (Auth, members & categories) — in review.** Phase 0 merged (PR #3).
+- **Phase:** **Phase 2 (Balance engine) — in review.** Phases 0 & 1 merged (PRs #3, #4).
 - **Repo:** `tally` (public, GitHub) · integration branch `main`.
-- **App:** Auth (magic link), session/group bootstrap + gating, onboarding, profile editing, member
-  management, and categories CRUD — all wired to Supabase with RLS. Needs a live Supabase project to run.
-- **Backend:** the user sets up Supabase (see `docs/SUPABASE_SETUP.md`); code is ready to connect.
+- **Engine:** pure, unit-tested balance engine in `src/lib/balance-engine/` (§6) — 55 tests, all green.
+  No backend needed; consumed by the dashboard/add-expense screens in later phases.
+- **Backend:** still pending the user's Supabase setup (`docs/SUPABASE_SETUP.md`) to run Phase 1 live.
 
 ## Next up
 
-1. **Review Phase 1** (PR open) + do the Supabase setup to test it live. After merge →
-   **Phase 2 — Schema & balance engine** (pure, unit-tested TypeScript; §6). Do this before the
-   dashboard/add-expense screens.
+1. **Review Phase 2** (PR open). After merge → **Phase 3 — Add Expense flow** (the first consumer of
+   the engine: basics + receipt photo, who-paid, involved, all 5 split modes incl. tax/tip, save/edit/delete).
 
 ---
 
 ## Log
+
+### 2026-06-01 — Phase 2 · balance engine (in review)
+- Built the engine test-first (TDD) in `src/lib/balance-engine/`: money (§6.5 rounding), splits
+  (5 methods + tax/tip §8), netting (§6.1 surplus-proportional edges, matches the worked example),
+  balances (§6.2–6.3 net + settlements + dashboard totals), fifo (§6.4 unpaid/days), simplify
+  (§6.6 minimal transfers), and clock (§6.7 group-tz today + month bounds).
+- Added Vitest (Node env). 55 unit tests, all green; build/lint/tsc ✓.
+- Pure logic only — no React, no I/O; the canonical ledger stays `expense_shares` + `expense_payers`.
+- Ran an adversarial multi-agent review (spec-correctness, numerical edge cases, coverage/determinism).
 
 ### 2026-05-31 — Phase 1 · auth, members & categories (in review)
 - Magic-link auth via Supabase: `AuthProvider`/`useAuth`, branded `LoginPage` (+ "backend not

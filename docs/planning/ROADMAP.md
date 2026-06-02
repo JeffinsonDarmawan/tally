@@ -11,8 +11,8 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 |---|---|---|
 | — | **Foundation** (VCS, docs, environment) | ✅ |
 | 0 | Scaffold & design system | ✅ |
-| 1 | Auth, members & categories | 🟡 in review |
-| 2 | Schema & balance engine (unit-tested) | ⬜ |
+| 1 | Auth, members & categories | ✅ |
+| 2 | Schema & balance engine (unit-tested) | 🟡 in review |
 | 3 | Add Expense flow | ⬜ |
 | 4 | Dashboard | ⬜ |
 | 5 | Settle up, reminders, activity log & notifications | ⬜ |
