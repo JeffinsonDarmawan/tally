@@ -99,6 +99,7 @@ create table if not exists public.expenses (
   category_id          uuid references public.categories (id) on delete set null,
   total_amount         numeric(12,2) not null check (total_amount > 0),
   split_method         text not null check (split_method in ('by_item','equal','uneven','shares','percentage')),
+  split_config         jsonb not null default '{}'::jsonb,  -- snapshot of the split inputs, for faithful editing (the engine reads expense_shares, not this)
   extra_charges        jsonb not null default '[]'::jsonb,  -- [{label, amount, mode:'proportional'|'equal'}]
   note                 text,
   receipt_url          text,                                -- Supabase Storage path; attach only (no OCR)
@@ -107,6 +108,9 @@ create table if not exists public.expenses (
   created_at           timestamptz not null default now(),
   updated_at           timestamptz not null default now()
 );
+
+-- Upgrade path: add split_config to an existing expenses table (create-if-not-exists won't alter it).
+alter table public.expenses add column if not exists split_config jsonb not null default '{}'::jsonb;
 
 create table if not exists public.expense_items (
   id         uuid primary key default gen_random_uuid(),

@@ -15,6 +15,22 @@ one-time setup to make Phase 1 (and everything after) run. Budget ~10 minutes.
 2. Paste the entire contents of [`database/supabase_schema.sql`](database/supabase_schema.sql) and
    click **Run**. This creates all tables, RLS policies, triggers, helper functions, the
    `create_group` RPC, and Realtime — it's written to run cleanly on a fresh project.
+   > Re-running it on an existing project is safe — it uses `if not exists` / `create or replace`
+   > and adds new columns (e.g. `expenses.split_config`) via `alter … add column if not exists`.
+
+## 2b. Receipt storage (optional — for expense photos)
+
+Only needed if you want to attach receipt photos to expenses.
+
+1. **Storage → New bucket** → name it `receipts`, keep it **Private**, create.
+2. **SQL Editor → New query** → run this so group members can read/write receipts in their group's
+   folder (paths are `"<group-id>/<file>"`):
+   ```sql
+   create policy "receipts read" on storage.objects for select to authenticated
+     using (bucket_id = 'receipts' and public.is_group_member(((storage.foldername(name))[1])::uuid));
+   create policy "receipts write" on storage.objects for insert to authenticated
+     with check (bucket_id = 'receipts' and public.is_group_member(((storage.foldername(name))[1])::uuid));
+   ```
 
 ## 3. Configure Auth (magic link)
 

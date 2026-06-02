@@ -7,20 +7,34 @@
 
 ## Current state
 
-- **Phase:** **Phase 2 (Balance engine) — in review.** Phases 0 & 1 merged (PRs #3, #4).
+- **Phase:** **Phase 3 (Add Expense flow) — in review.** Phases 0–2 merged (PRs #3, #4, #6).
 - **Repo:** `tally` (public, GitHub) · integration branch `main`.
-- **Engine:** pure, unit-tested balance engine in `src/lib/balance-engine/` (§6) — 55 tests, all green.
-  No backend needed; consumed by the dashboard/add-expense screens in later phases.
-- **Backend:** still pending the user's Supabase setup (`docs/SUPABASE_SETUP.md`) to run Phase 1 live.
+- **App:** the full Add/Edit/Delete-Expense flow (5 split modes, single/multiple payers, tax/tip,
+  receipt) is wired to Supabase via the engine; History lists saved expenses. 69 unit tests green.
+- **Backend:** still pending the user's Supabase setup (`docs/SUPABASE_SETUP.md`) to run the
+  authenticated flows live; new this phase — an optional `receipts` Storage bucket.
 
 ## Next up
 
-1. **Review Phase 2** (PR open). After merge → **Phase 3 — Add Expense flow** (the first consumer of
-   the engine: basics + receipt photo, who-paid, involved, all 5 split modes incl. tax/tip, save/edit/delete).
+1. **Review Phase 3** (PR open). After merge → **Phase 4 — Dashboard** (net hero, owed/owe tiles,
+   per-friend balances, simplify-debts toggle, this-month activity — the engine's main consumer).
 
 ---
 
 ## Log
+
+### 2026-06-02 — Phase 3 · Add Expense flow (in review)
+- Built the multi-step Add/Edit Expense sheet (§8): Basics → Who paid → Involved → Split, with all
+  5 modes (equal, by-item + tax/tip, uneven, weighted shares, percentage) and live per-person previews.
+- TDD'd the payload builder + form-state model (13 tests) bridging the form → canonical
+  `expense_shares`/`expense_payers` via the engine; enforces both ledger invariants.
+- Data layer: create (cleanup-on-failure for atomicity), edit (replace children), delete (cascade),
+  list; activity_log + notifications on each; receipt upload to Storage. Added `split_config` to
+  `expenses` for faithful editing.
+- History page now lists expenses (tap → edit/delete); FAB opens the flow via `ExpenseSheetProvider`.
+- Verified: 69 tests, build, lint, tsc ✓; app boots cleanly. The signed-in flow needs the user's
+  Supabase project to exercise end-to-end.
+- No background review workflow this phase (per the owner's request to avoid approval floods).
 
 ### 2026-06-01 — Phase 2 · balance engine (in review)
 - Built the engine test-first (TDD) in `src/lib/balance-engine/`: money (§6.5 rounding), splits

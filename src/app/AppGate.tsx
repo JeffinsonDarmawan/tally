@@ -1,5 +1,6 @@
 import { useAuth, LoginPage } from '@/features/auth'
 import { useGroup, OnboardingPage } from '@/features/group'
+import { ExpenseSheetProvider } from '@/features/expenses'
 import { AppRoutes } from './router'
 import { Splash, SplashError } from './Splash'
 
@@ -21,5 +22,9 @@ function GroupGate() {
   if (status === 'loading') return <Splash label="Loading your group…" />
   if (status === 'error') return <SplashError message={error} onRetry={() => void refresh()} />
   if (status === 'no-group') return <OnboardingPage />
-  return <AppRoutes />
+  return (
+    <ExpenseSheetProvider>
+      <AppRoutes />
+    </ExpenseSheetProvider>
+  )
 }
