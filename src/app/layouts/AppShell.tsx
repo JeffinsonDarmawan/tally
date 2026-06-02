@@ -1,4 +1,4 @@
-import { useState, type ComponentType } from 'react'
+import { type ComponentType } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   IconHome,
@@ -11,7 +11,8 @@ import {
 } from '@tabler/icons-react'
 import { cn } from '@/lib/utils/cn'
 import { APP_NAME } from '@/config'
-import { Button, Modal } from '@/components/ui'
+import { Button } from '@/components/ui'
+import { useExpenseSheet } from '@/features/expenses'
 
 interface NavItem {
   to: string
@@ -41,30 +42,9 @@ function Logo({ className }: { className?: string }) {
   )
 }
 
-/** Placeholder Add-Expense modal — the real multi-step flow lands in Phase 3. */
-function AddExpensePlaceholder({ open, onClose }: { open: boolean; onClose: () => void }) {
-  return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title="Add expense"
-      footer={
-        <Button fullWidth disabled>
-          Coming in Phase 3
-        </Button>
-      }
-    >
-      <p className="text-sm text-subtle">
-        The full add-expense flow — basics, who paid, who’s involved, and all five split modes — is
-        built in Phase 3. This sheet is wired up so the design system and navigation can be reviewed.
-      </p>
-    </Modal>
-  )
-}
-
 export function AppShell() {
-  const [addOpen, setAddOpen] = useState(false)
   const navigate = useNavigate()
+  const { openAdd } = useExpenseSheet()
 
   return (
     <div className="min-h-[100dvh] bg-base">
@@ -95,7 +75,7 @@ export function AppShell() {
             </NavLink>
           ))}
 
-          <Button className="mt-3" leftIcon={<IconPlus className="size-4" stroke={2.5} />} onClick={() => setAddOpen(true)}>
+          <Button className="mt-3" leftIcon={<IconPlus className="size-4" stroke={2.5} />} onClick={() => openAdd()}>
             Add expense
           </Button>
         </nav>
@@ -147,7 +127,7 @@ export function AppShell() {
           <div className="flex justify-center">
             <button
               type="button"
-              onClick={() => setAddOpen(true)}
+              onClick={() => openAdd()}
               aria-label="Add expense"
               className="-mt-6 grid size-14 place-items-center rounded-2xl bg-accent text-[var(--color-base)] shadow-pop transition-[filter] duration-150 hover:brightness-110 active:brightness-95"
             >
@@ -158,8 +138,6 @@ export function AppShell() {
           <TabLink {...NAV[3]} />
         </div>
       </nav>
-
-      <AddExpensePlaceholder open={addOpen} onClose={() => setAddOpen(false)} />
     </div>
   )
 }

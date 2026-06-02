@@ -173,6 +173,7 @@ export interface Database {
           category_id: string | null
           total_amount: number
           split_method: SplitMethod
+          split_config: Json
           extra_charges: Json
           note: string | null
           receipt_url: string | null
@@ -189,6 +190,7 @@ export interface Database {
           category_id?: string | null
           total_amount: number
           split_method: SplitMethod
+          split_config?: Json
           extra_charges?: Json
           note?: string | null
           receipt_url?: string | null

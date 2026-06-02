@@ -12,6 +12,22 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Added — Phase 3: Add Expense flow
+- Multi-step **Add/Edit Expense** sheet (brief §8): Basics (date, category, total, note, optional
+  receipt photo) → Who paid (single or multiple payers with live remaining) → Who's involved →
+  How to split, with all **five split modes**: equal, by-item (with tax/tip/service auto-allocation),
+  uneven/exact, weighted shares, and percentage — each with live per-person previews.
+- A pure, unit-tested payload builder + form-state model (13 tests) that turn the form into the
+  canonical `expense_shares` + `expense_payers` via the engine, enforcing Σ shares == total and
+  Σ payers == total.
+- Expenses data layer: atomic-ish create (with cleanup-on-failure), edit (replace children),
+  delete (cascade) — all writing `activity_log` + notifications; receipt upload to Storage.
+- Stored a `split_config` snapshot on each expense for faithful editing (schema + types).
+- History page now lists the group's expenses (newest first); tap to edit or delete. (Search /
+  filters / bulk actions arrive in Phase 7.)
+- New kit pieces: `MoneyInput`, `Toggle`; the FAB now opens the real flow via an `ExpenseSheetProvider`.
+- `docs/SUPABASE_SETUP.md`: optional `receipts` Storage bucket + RLS.
+
 ### Added — Phase 2: Balance engine
 - Pure, unit-tested balance engine in `src/lib/balance-engine/` (brief §6), built test-first (54 tests):
   - **money** — integer-cents conversion + deterministic remainder distribution (§6.5).
