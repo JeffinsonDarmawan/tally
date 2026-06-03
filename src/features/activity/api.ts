@@ -1,6 +1,18 @@
 import { supabase } from '@/lib/supabase/client'
 import type { Json } from '@/types/database.types'
 
+export interface ActivityRow {
+  id: string
+  group_id: string
+  actor: string
+  action_type: string
+  target_type: string | null
+  target_id: string | null
+  summary: string
+  metadata: Json
+  created_at: string
+}
+
 /** Append a row to the transparency feed (brief §5). actor must be the current user (RLS). */
 export async function logActivity(input: {
   groupId: string
@@ -23,16 +35,14 @@ export async function logActivity(input: {
   if (error) throw error
 }
 
-/** Create in-app notifications for a set of recipients (RLS allows notifying group members). */
-export async function notifyUsers(
-  userIds: string[],
-  type: string,
-  message: string,
-  link?: string | null,
-): Promise<void> {
-  if (userIds.length === 0) return
-  const { error } = await supabase
-    .from('notifications')
-    .insert(userIds.map((user_id) => ({ user_id, type, message, link: link ?? null })))
+/** The group's activity feed, newest first. */
+export async function fetchActivity(groupId: string, limit = 50): Promise<ActivityRow[]> {
+  const { data, error } = await supabase
+    .from('activity_log')
+    .select('*')
+    .eq('group_id', groupId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
   if (error) throw error
+  return data ?? []
 }

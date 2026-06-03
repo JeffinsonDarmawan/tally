@@ -22,6 +22,7 @@ import { useAuth } from '@/features/auth'
 import { useGroup } from '@/features/group'
 import { useCategories } from '@/features/categories'
 import { useExpenseSheet } from '@/features/expenses'
+import { useSettleSheet } from '@/features/settlements'
 import { useDashboard } from './useDashboard'
 import type { ActivityItem, FriendBalance } from './summarize'
 
@@ -35,6 +36,7 @@ export function OverviewPage() {
 
   const { summary, status, error, reload } = useDashboard(group?.id, me, memberIds)
   const { openAdd, openEdit } = useExpenseSheet()
+  const { openSettle } = useSettleSheet()
   const navigate = useNavigate()
   const [view, setView] = useState<'detailed' | 'simplified'>('detailed')
 
@@ -146,7 +148,17 @@ export function OverviewPage() {
                 return (
                   <div key={f.friendId}>
                     {i > 0 && <ListDivider />}
-                    <FriendRow balance={f} name={member.display_name} color={member.avatar_color} />
+                    <FriendRow
+                      balance={f}
+                      name={member.display_name}
+                      color={member.avatar_color}
+                      onClick={() =>
+                        openSettle(
+                          { friendId: f.friendId, netCents: f.netCents, daysUnpaid: f.daysUnpaid },
+                          reload,
+                        )
+                      }
+                    />
                   </div>
                 )
               })
@@ -219,7 +231,17 @@ export function OverviewPage() {
   )
 }
 
-function FriendRow({ balance, name, color }: { balance: FriendBalance; name: string; color: string }) {
+function FriendRow({
+  balance,
+  name,
+  color,
+  onClick,
+}: {
+  balance: FriendBalance
+  name: string
+  color: string
+  onClick: () => void
+}) {
   const settled = balance.direction === 'settled'
   const theyOwe = balance.direction === 'they_owe'
   const subtitle = settled
@@ -227,6 +249,8 @@ function FriendRow({ balance, name, color }: { balance: FriendBalance; name: str
     : `${theyOwe ? 'owes you' : 'you owe'}${balance.daysUnpaid != null ? ` · ${balance.daysUnpaid}d unpaid` : ''}`
   return (
     <ListRow
+      onClick={onClick}
+      chevron
       leading={<Avatar name={name} color={color} />}
       title={name}
       subtitle={subtitle}

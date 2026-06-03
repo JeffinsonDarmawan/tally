@@ -12,6 +12,19 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Added — Phase 5: Settle up, reminders, activity & notifications
+- **Settle up** — tap a friend on the dashboard to record a repayment (brief §11): pick direction,
+  amount (prefilled to the outstanding), date, note. **Partial, full, and overpayment-as-credit** are
+  handled; the balance updates symmetrically on both sides via the engine.
+- **Reminders** — a one-tap *Remind* on a friend who owes you: creates an in-app notification for them
+  and copies a friendly, prefilled message to your clipboard. Logged as `reminder.sent`.
+- **Activity feed** — the group transparency log (expenses created/edited/deleted, settlements,
+  reminders), newest first, in the inbox panel.
+- **In-app notifications** — a header **bell** with an unread badge; opening the inbox marks them read.
+- Settlements / activity / notifications data layers; the activity-log + notify write-helpers moved
+  into their own features (consumed by expenses + settlements). TDD'd settle-up defaults + reminder
+  text (5 tests).
+
 ### Added — Phase 4: Dashboard
 - The Overview now shows **real balances** from the engine (replacing the sample-data preview):
   net-balance hero, tinted **you're owed / you owe** tiles, and an **unpaid transactions** stat
