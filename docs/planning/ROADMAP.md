@@ -13,8 +13,8 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 | 0 | Scaffold & design system | ✅ |
 | 1 | Auth, members & categories | ✅ |
 | 2 | Schema & balance engine (unit-tested) | ✅ |
-| 3 | Add Expense flow | 🟡 in review |
-| 4 | Dashboard | ⬜ |
+| 3 | Add Expense flow | ✅ |
+| 4 | Dashboard | 🟡 in review |
 | 5 | Settle up, reminders, activity log & notifications | ⬜ |
 | 6 | Recurring payments | ⬜ |
 | 7 | History page | ⬜ |

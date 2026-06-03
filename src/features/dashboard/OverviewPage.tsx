@@ -1,40 +1,85 @@
-import { useState } from 'react'
-import { IconArrowUpRight, IconArrowDownRight, IconClockExclamation } from '@tabler/icons-react'
+import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { IconArrowDownRight, IconArrowUpRight, IconClockExclamation, IconArrowRight } from '@tabler/icons-react'
 import {
   Avatar,
+  Button,
   Card,
+  CategoryTile,
+  EmptyState,
+  ErrorState,
   ListDivider,
   ListRow,
+  LoadingRows,
   SectionHeader,
   SegmentedControl,
   StatCard,
 } from '@/components/ui'
 import { cn } from '@/lib/utils/cn'
-import { formatMoney, formatMoneyAbs } from '@/lib/utils/format'
-import { SAMPLE_BALANCES } from './sampleData'
+import { fromCents } from '@/lib/balance-engine'
+import { formatDate, formatMoney, formatMoneyAbs } from '@/lib/utils/format'
+import { useAuth } from '@/features/auth'
+import { useGroup } from '@/features/group'
+import { useCategories } from '@/features/categories'
+import { useExpenseSheet } from '@/features/expenses'
+import { useDashboard } from './useDashboard'
+import type { ActivityItem, FriendBalance } from './summarize'
 
 export function OverviewPage() {
+  const { user } = useAuth()
+  const { group, members, membersById } = useGroup()
+  const me = user?.id ?? ''
+  const memberIds = useMemo(() => members.map((m) => m.id), [members])
+  const { categories } = useCategories(group?.id)
+  const categoriesById = useMemo(() => Object.fromEntries(categories.map((c) => [c.id, c])), [categories])
+
+  const { summary, status, error, reload } = useDashboard(group?.id, me, memberIds)
+  const { openAdd, openEdit } = useExpenseSheet()
+  const navigate = useNavigate()
   const [view, setView] = useState<'detailed' | 'simplified'>('detailed')
 
-  const owed = SAMPLE_BALANCES.filter((b) => b.net > 0).reduce((s, b) => s + b.net, 0)
-  const owe = SAMPLE_BALANCES.filter((b) => b.net < 0).reduce((s, b) => s + Math.abs(b.net), 0)
-  const net = owed - owe
-  const unpaidCount = SAMPLE_BALANCES.filter((b) => b.net !== 0).length
+  if (status === 'loading' || !summary) {
+    return (
+      <div className="space-y-6">
+        <div className="px-1 pt-2">
+          <div className="h-3 w-20 animate-pulse rounded bg-elevated" />
+          <div className="mt-3 h-12 w-44 animate-pulse rounded bg-elevated" />
+        </div>
+        <Card flush>
+          <LoadingRows rows={4} />
+        </Card>
+      </div>
+    )
+  }
+
+  if (status === 'error') {
+    return <ErrorState description={error ?? undefined} onRetry={() => void reload()} />
+  }
+
+  const net = summary.overallNetCents
+  const friendCount = Math.max(0, memberIds.length - 1)
+  const heroColor = net > 0 ? 'text-owed' : net < 0 ? 'text-owe' : 'text-ink'
+  const heroLabel =
+    net > 0 ? "You're owed overall" : net < 0 ? 'You owe overall' : "You're all settled up"
+
+  const sortedFriends = [...summary.perFriend].sort((a, b) => {
+    const settledA = a.direction === 'settled' ? 1 : 0
+    const settledB = b.direction === 'settled' ? 1 : 0
+    if (settledA !== settledB) return settledA - settledB
+    return Math.abs(b.netCents) - Math.abs(a.netCents)
+  })
 
   return (
     <div className="space-y-6">
-      <PreviewBanner />
-
       {/* Net balance hero */}
       <header className="reveal px-1 pt-2">
         <p className="micro-label">Net balance</p>
-        <div
-          className={cn('figure-hero mt-2 text-6xl', net >= 0 ? 'text-owed' : 'text-owe')}
-        >
-          {formatMoney(net, { signDisplay: 'always' })}
+        <div className={cn('figure-hero mt-2 text-6xl', heroColor)}>
+          {formatMoney(fromCents(net), { signDisplay: net === 0 ? 'auto' : 'always' })}
         </div>
         <p className="mt-2 text-sm text-subtle">
-          {net >= 0 ? "You're owed overall" : 'You owe overall'} · across {SAMPLE_BALANCES.length} friends
+          {heroLabel}
+          {friendCount > 0 && ` · across ${friendCount} friend${friendCount === 1 ? '' : 's'}`}
         </p>
       </header>
 
@@ -43,13 +88,13 @@ export function OverviewPage() {
         <StatCard
           tone="owed"
           label="You're owed"
-          value={formatMoneyAbs(owed)}
+          value={formatMoneyAbs(fromCents(summary.totalOwedCents))}
           icon={<IconArrowDownRight className="size-4" stroke={2.5} />}
         />
         <StatCard
           tone="owe"
           label="You owe"
-          value={formatMoneyAbs(owe)}
+          value={formatMoneyAbs(fromCents(summary.totalOweCents))}
           icon={<IconArrowUpRight className="size-4" stroke={2.5} />}
         />
       </div>
@@ -59,81 +104,182 @@ export function OverviewPage() {
         style={{ animationDelay: '120ms' }}
         tone="neutral"
         label="Unpaid transactions"
-        value={<span className="num">{unpaidCount}</span>}
-        hint="Oldest is 9 days old"
+        value={<span className="num">{summary.unpaidCount}</span>}
+        hint={
+          summary.oldestDaysUnpaid != null
+            ? `Oldest is ${summary.oldestDaysUnpaid} day${summary.oldestDaysUnpaid === 1 ? '' : 's'} old`
+            : 'Nothing outstanding'
+        }
         icon={<IconClockExclamation className="size-4" stroke={2} />}
-        onClick={() => {}}
+        onClick={() => navigate('/history')}
       />
 
-      {/* Per-friend balances */}
+      {/* Per-friend balances / simplified settle-up */}
       <section className="reveal" style={{ animationDelay: '160ms' }}>
         <SectionHeader
           action={
-            <SegmentedControl
-              size="sm"
-              aria-label="Balance view"
-              value={view}
-              onChange={setView}
-              options={[
-                { value: 'detailed', label: 'Detailed' },
-                { value: 'simplified', label: 'Simplified' },
-              ]}
-            />
+            friendCount > 0 ? (
+              <SegmentedControl
+                size="sm"
+                aria-label="Balance view"
+                value={view}
+                onChange={setView}
+                options={[
+                  { value: 'detailed', label: 'Detailed' },
+                  { value: 'simplified', label: 'Simplified' },
+                ]}
+              />
+            ) : undefined
           }
         >
           Balances
         </SectionHeader>
 
+        {view === 'detailed' ? (
+          <Card flush>
+            {sortedFriends.length === 0 ? (
+              <EmptyState title="No friends yet" description="Add the others in Settings → Members." />
+            ) : (
+              sortedFriends.map((f, i) => {
+                const member = membersById[f.friendId]
+                if (!member) return null
+                return (
+                  <div key={f.friendId}>
+                    {i > 0 && <ListDivider />}
+                    <FriendRow balance={f} name={member.display_name} color={member.avatar_color} />
+                  </div>
+                )
+              })
+            )}
+          </Card>
+        ) : (
+          <Card flush>
+            {summary.simplified.length === 0 ? (
+              <EmptyState title="All settled up" description="No transfers needed — everyone's even." />
+            ) : (
+              summary.simplified.map((t, i) => {
+                const from = membersById[t.from]
+                const to = membersById[t.to]
+                if (!from || !to) return null
+                const mine = t.from === me || t.to === me
+                return (
+                  <div key={`${t.from}-${t.to}-${i}`}>
+                    {i > 0 && <ListDivider />}
+                    <div className="flex items-center gap-3 px-4 py-3">
+                      <Avatar name={from.display_name} color={from.avatar_color} size="sm" />
+                      <IconArrowRight className="size-4 text-faint" stroke={2} />
+                      <Avatar name={to.display_name} color={to.avatar_color} size="sm" />
+                      <span className={cn('flex-1 truncate text-sm', mine ? 'text-ink' : 'text-subtle')}>
+                        {from.display_name} pays {to.display_name}
+                      </span>
+                      <span className="num text-[15px] font-semibold tabular-nums text-ink">
+                        {formatMoney(fromCents(t.amountCents))}
+                      </span>
+                    </div>
+                  </div>
+                )
+              })
+            )}
+          </Card>
+        )}
+      </section>
+
+      {/* This month's activity */}
+      <section className="reveal" style={{ animationDelay: '200ms' }}>
+        <SectionHeader>This month</SectionHeader>
         <Card flush>
-          {SAMPLE_BALANCES.map((b, i) => {
-            const settled = b.net === 0
-            const youAreOwed = b.net > 0
-            return (
-              <div key={b.person.id}>
+          {summary.monthActivity.length === 0 ? (
+            <EmptyState
+              title="No activity this month"
+              description="Add an expense and it’ll show up here."
+              action={
+                <Button size="sm" onClick={() => openAdd(reload)}>
+                  Add expense
+                </Button>
+              }
+            />
+          ) : (
+            summary.monthActivity.map((a, i) => (
+              <div key={a.expenseId}>
                 {i > 0 && <ListDivider />}
-                <ListRow
-                  onClick={() => {}}
-                  chevron
-                  leading={<Avatar name={b.person.name} color={b.person.color} />}
-                  title={b.person.name}
-                  subtitle={
-                    settled
-                      ? 'All settled up'
-                      : `${youAreOwed ? 'owes you' : 'you owe'} · ${b.daysUnpaid}d unpaid`
-                  }
-                  trailing={
-                    <span
-                      className={cn(
-                        'num text-[15px] font-semibold tabular-nums',
-                        settled ? 'text-faint' : youAreOwed ? 'text-owed' : 'text-owe',
-                      )}
-                    >
-                      {settled ? '—' : formatMoneyAbs(b.net)}
-                    </span>
-                  }
+                <ActivityRow
+                  item={a}
+                  categoryName={a.categoryId ? categoriesById[a.categoryId]?.name : undefined}
+                  categoryIcon={a.categoryId ? categoriesById[a.categoryId]?.icon : undefined}
+                  categoryColor={a.categoryId ? categoriesById[a.categoryId]?.color : undefined}
+                  payerName={a.paidBy ? membersById[a.paidBy]?.display_name : undefined}
+                  onClick={() => openEdit(a.expenseId, reload)}
                 />
               </div>
-            )
-          })}
+            ))
+          )}
         </Card>
-        {view === 'simplified' && (
-          <p className="mt-2 px-1 text-xs text-faint">
-            Simplified view (minimal transfers) is wired in Phase 4 · 5.
-          </p>
-        )}
       </section>
     </div>
   )
 }
 
-function PreviewBanner() {
+function FriendRow({ balance, name, color }: { balance: FriendBalance; name: string; color: string }) {
+  const settled = balance.direction === 'settled'
+  const theyOwe = balance.direction === 'they_owe'
+  const subtitle = settled
+    ? 'All settled up'
+    : `${theyOwe ? 'owes you' : 'you owe'}${balance.daysUnpaid != null ? ` · ${balance.daysUnpaid}d unpaid` : ''}`
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-accent/20 bg-accent-soft/60 px-3 py-2 text-xs text-subtle">
-      <span className="size-1.5 rounded-full bg-accent" />
-      <span>
-        <span className="font-medium text-ink">Phase 0 · design system preview.</span> Figures are
-        sample data — live balances arrive with the engine in Phase 2 · 4.
-      </span>
-    </div>
+    <ListRow
+      leading={<Avatar name={name} color={color} />}
+      title={name}
+      subtitle={subtitle}
+      trailing={
+        <span
+          className={cn(
+            'num text-[15px] font-semibold tabular-nums',
+            settled ? 'text-faint' : theyOwe ? 'text-owed' : 'text-owe',
+          )}
+        >
+          {settled ? '—' : formatMoneyAbs(fromCents(balance.netCents))}
+        </span>
+      }
+    />
+  )
+}
+
+function ActivityRow({
+  item,
+  categoryName,
+  categoryIcon,
+  categoryColor,
+  payerName,
+  onClick,
+}: {
+  item: ActivityItem
+  categoryName?: string
+  categoryIcon?: string | null
+  categoryColor?: string | null
+  payerName?: string
+  onClick: () => void
+}) {
+  const iFronted = item.myPaidCents > item.myShareCents
+  const payerLabel = payerName
+    ? `${payerName}${item.payerCount > 1 ? ` +${item.payerCount - 1}` : ''} paid`
+    : 'Paid'
+  return (
+    <ListRow
+      onClick={onClick}
+      chevron
+      leading={<CategoryTile icon={categoryIcon} color={categoryColor} />}
+      title={categoryName ?? 'Expense'}
+      subtitle={`${formatDate(item.date)} · ${payerLabel}`}
+      trailing={
+        <span className="flex flex-col items-end">
+          <span className="num text-[15px] font-semibold tabular-nums text-ink">
+            {formatMoney(fromCents(item.totalCents))}
+          </span>
+          <span className={cn('num text-xs tabular-nums', iFronted ? 'text-owed' : 'text-subtle')}>
+            your share {formatMoneyAbs(fromCents(item.myShareCents))}
+          </span>
+        </span>
+      }
+    />
   )
 }

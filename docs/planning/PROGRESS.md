@@ -7,21 +7,33 @@
 
 ## Current state
 
-- **Phase:** **Phase 3 (Add Expense flow) — in review.** Phases 0–2 merged (PRs #3, #4, #6).
+- **Phase:** **Phase 4 (Dashboard) — in review.** Phases 0–3 merged (PRs #3, #4, #6, #7).
 - **Repo:** `tally` (public, GitHub) · integration branch `main`.
-- **App:** the full Add/Edit/Delete-Expense flow (5 split modes, single/multiple payers, tax/tip,
-  receipt) is wired to Supabase via the engine; History lists saved expenses. 69 unit tests green.
-- **Backend:** still pending the user's Supabase setup (`docs/SUPABASE_SETUP.md`) to run the
-  authenticated flows live; new this phase — an optional `receipts` Storage bucket.
+- **App:** the dashboard shows **real engine balances** (net hero, owed/owe tiles, unpaid stat,
+  per-friend with days-unpaid, Detailed⇄Simplified toggle, this-month activity). 76 unit tests green.
+- **Backend:** **live** — the owner connected Supabase (`.env` set locally, gitignored); the 5 can
+  sign in, form the group, and add expenses for real. Optional `receipts` bucket still available.
 
 ## Next up
 
-1. **Review Phase 3** (PR open). After merge → **Phase 4 — Dashboard** (net hero, owed/owe tiles,
-   per-friend balances, simplify-debts toggle, this-month activity — the engine's main consumer).
+1. **Review Phase 4** (PR open) — now viewable live in the browser. After merge → **Phase 5 —
+   Settle up, reminders, activity log & notifications** (record repayments; the per-friend rows
+   become the entry point to settle up).
 
 ---
 
 ## Log
+
+### 2026-06-03 — Phase 4 · Dashboard (in review)
+- Replaced the Overview's sample data with real engine output: net hero, owed/owe tiles, unpaid stat,
+  per-friend balances (direction + days-unpaid), Detailed⇄Simplified toggle (§6.6 minimal transfers),
+  and this-month activity (who paid incl. "+N", total, your share; tap → edit).
+- TDD'd a pure `summarizeDashboard` (7 tests) deriving everything from fetched rows via the engine;
+  added the dashboard data layer + `useDashboard` hook.
+- Verified: 76 tests, build, lint, tsc ✓. The owner connected Supabase mid-phase, so this one is
+  viewable live in the browser.
+- Deferred to later phases (as designed): tapping a friend → settle-up (Phase 5); pending-recurring
+  prompts (Phase 6); the unpaid stat's filtered list (Phase 7 History filters).
 
 ### 2026-06-02 — Phase 3 · Add Expense flow (in review)
 - Built the multi-step Add/Edit Expense sheet (§8): Basics → Who paid → Involved → Split, with all
