@@ -12,6 +12,17 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Added — Phase 4: Dashboard
+- The Overview now shows **real balances** from the engine (replacing the sample-data preview):
+  net-balance hero, tinted **you're owed / you owe** tiles, and an **unpaid transactions** stat
+  (tap → History).
+- **Per-friend balances** with direction + days-unpaid, and a **Detailed ⇄ Simplified** toggle —
+  the simplified view lists the minimal set of transfers to zero the whole group (§6.6, §11).
+- **This-month activity** — the month's expenses involving you, with who paid (incl. "+N" for
+  multiple payers), the total, and your share; tap a row to edit.
+- A pure, unit-tested `summarizeDashboard` (7 tests) that derives all of the above from fetched
+  rows via the engine, plus a `useDashboard` hook and the dashboard data layer.
+
 ### Added — Phase 3: Add Expense flow
 - Multi-step **Add/Edit Expense** sheet (brief §8): Basics (date, category, total, note, optional
   receipt photo) → Who paid (single or multiple payers with live remaining) → Who's involved →
