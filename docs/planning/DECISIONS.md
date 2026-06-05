@@ -7,6 +7,17 @@ Format inspired by [Michael Nygard's ADRs](https://cognitect.com/blog/2011/11/15
 
 ---
 
+## ADR-0007 — Drop receipt-photo attachments from v1
+**Status:** Accepted · 2026-06-03
+**Context:** The Add-Expense flow offered an optional receipt photo (uploaded to Supabase Storage).
+For a private 5-person group it adds Storage cost, a bucket + RLS to set up, and a failure mode
+(a missing `receipts` bucket surfaced a confusing "Bucket not found" error that blocked saving).
+**Decision:** Remove the receipt-attach option from v1 — the UI, the upload helper (`storage.ts`),
+and the optional bucket setup. The nullable `expenses.receipt_url` column stays (harmless, always
+null) so the schema still matches the brief and the feature can return later without a migration.
+**Consequences:** No Storage usage; simpler save path (no upload step to fail). Receipt capture —
+plain attach and the OCR-itemise idea — lives in [`BACKLOG.md`](BACKLOG.md) as a future enhancement.
+
 ## ADR-0006 — No third-party tooling attribution in history
 **Status:** Accepted · 2026-05-30
 **Context:** The owner wants the repository to read as a first-party project with a clean,

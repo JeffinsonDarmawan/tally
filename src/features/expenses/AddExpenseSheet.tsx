@@ -12,7 +12,6 @@ import { emptyForm, draftToForm, formToDraft, type FormState } from './formState
 import { BasicsStep, PayersStep, InvolvedStep } from './ExpenseSteps'
 import { SplitStep } from './SplitStep'
 import { createExpense, updateExpense, deleteExpense, fetchExpenseForEdit } from './api'
-import { uploadReceipt } from './storage'
 
 const STEPS = ['Basics', 'Who paid', 'Involved', 'Split'] as const
 
@@ -32,7 +31,6 @@ export function AddExpenseSheet({ open, onClose, onSaved, editId }: AddExpenseSh
 
   const [form, setForm] = useState<FormState>(() => emptyForm(memberIds, me, '2026-01-01'))
   const [step, setStep] = useState(0)
-  const [receiptFile, setReceiptFile] = useState<File | null>(null)
   const [errors, setErrors] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
   const [loadingEdit, setLoadingEdit] = useState(false)
@@ -43,7 +41,6 @@ export function AddExpenseSheet({ open, onClose, onSaved, editId }: AddExpenseSh
     if (!open) return
     setStep(0)
     setErrors([])
-    setReceiptFile(null)
     if (editId) {
       setLoadingEdit(true)
       fetchExpenseForEdit(editId)
@@ -64,15 +61,9 @@ export function AddExpenseSheet({ open, onClose, onSaved, editId }: AddExpenseSh
 
   async function handleSave() {
     setErrors([])
-    let finalDraft = draft
     setSaving(true)
     try {
-      if (receiptFile && group) {
-        const path = await uploadReceipt(receiptFile, group.id)
-        finalDraft = { ...draft, receiptUrl: path }
-        set({ receiptUrl: path })
-      }
-      const built = buildExpense(finalDraft)
+      const built = buildExpense(draft)
       if (!built.ok) {
         setErrors(built.errors)
         setSaving(false)
@@ -80,9 +71,9 @@ export function AddExpenseSheet({ open, onClose, onSaved, editId }: AddExpenseSh
       }
       if (!group || !me) throw new Error('Not ready.')
       if (editId) {
-        await updateExpense(editId, group.id, me, finalDraft, built)
+        await updateExpense(editId, group.id, me, draft, built)
       } else {
-        await createExpense(group.id, me, finalDraft, built)
+        await createExpense(group.id, me, draft, built)
       }
       onSaved?.()
       onClose()
@@ -156,19 +147,7 @@ export function AddExpenseSheet({ open, onClose, onSaved, editId }: AddExpenseSh
         <div className="space-y-4">
           <Stepper step={step} onStep={setStep} canDelete={!!editId} onDelete={() => setConfirmDelete(true)} />
 
-          {step === 0 && (
-            <BasicsStep
-              form={form}
-              set={set}
-              categories={categories}
-              receiptName={receiptFile?.name ?? (form.receiptUrl ? 'Attached' : null)}
-              onPickReceipt={setReceiptFile}
-              onClearReceipt={() => {
-                setReceiptFile(null)
-                set({ receiptUrl: null })
-              }}
-            />
-          )}
+          {step === 0 && <BasicsStep form={form} set={set} categories={categories} />}
           {step === 1 && <PayersStep form={form} set={set} members={members} />}
           {step === 2 && <InvolvedStep form={form} set={set} members={members} />}
           {step === 3 && <SplitStep form={form} set={set} members={members} preview={preview} />}
