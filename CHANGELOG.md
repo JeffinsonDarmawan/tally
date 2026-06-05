@@ -12,6 +12,16 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Added — Phase 7: History page
+- The History page is now a full ledger browser (brief §12): **search** (notes + categories),
+  **filters** (status outstanding/settled, category, member, date range, amount range), and **sort**
+  by date or amount (asc/desc).
+- **Bulk select → recategorize / delete:** enter select mode, tick rows, and recategorize or delete
+  them in one action (delete recomputes balances and logs to the activity feed).
+- Each row shows category/note, date, who paid (incl. "+N"), the total, and an **outstanding** dot.
+- Pure, unit-tested logic: a `filterAndSort` helper (8 tests) and a new engine helper
+  `unpaidExpenseIds` (4 tests) that maps FIFO unpaid edges back to expenses for the paid/unpaid filter.
+
 ### Changed
 - **Removed the receipt-photo attach option** from the Add-Expense flow (and the Supabase Storage
   helper + bucket setup). For a 5-person group it added Storage cost and a confusing failure mode;

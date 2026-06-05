@@ -16,8 +16,8 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 | 3 | Add Expense flow | ✅ |
 | 4 | Dashboard | ✅ |
 | 5 | Settle up, reminders, activity log & notifications | ✅ |
-| 6 | Recurring payments | 🟡 in review |
-| 7 | History page | ⬜ |
+| 6 | Recurring payments | ✅ |
+| 7 | History page | 🟡 in review |
 | 8 | Summary pages | ⬜ |
 | 9 | Polish & deploy | ⬜ |
 

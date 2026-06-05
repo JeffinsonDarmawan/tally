@@ -7,21 +7,29 @@
 
 ## Current state
 
-- **Phase:** **Phase 6 (Recurring payments) — in review.** Phases 0–5 merged (PRs #3, #4, #6, #7, #8, #9).
+- **Phase:** **Phase 7 (History page) — in review.** Phases 0–6 merged (#3, #4, #6, #7, #8, #9, #10);
+  receipt-attach removed (#11) and a demo-members seed script added (#12).
 - **Repo:** `tally` (public, GitHub) · integration branch `main`.
-- **App:** recurring templates with **confirm-before-post** — due periods prompt on the recurring page
-  and dashboard; fixed confirm fast, variable requires a real amount; future periods never post.
-  91 unit tests green (incl. a 10-test scheduler).
-- **Backend:** **live** (owner connected Supabase). 7 of the 10 phases done.
+- **App:** History is a full ledger browser — search, filters (status/category/member/date/amount),
+  sort, and bulk select → recategorize/delete. 103 unit tests green.
+- **Backend:** **live** (owner connected Supabase). 8 of the 10 phases done.
 
 ## Next up
 
-1. **Review Phase 6** (PR open) — testable live. After merge → **Phase 7 — History page**
-   (full list with search, filter, sort, and bulk select → recategorize/delete).
+1. **Review Phase 7** (PR open) — testable live. After merge → **Phase 8 — Summary pages**
+   (month/year charts: category donut, who-paid, timeline, settled-vs-pending; CSV + PDF export).
 
 ---
 
 ## Log
+
+### 2026-06-05 — Phase 7 · History page (in review)
+- Full ledger browser: search (notes + categories), filters (status outstanding/settled, category,
+  member, date range, amount range), and sort by date/amount (asc/desc).
+- Bulk select → recategorize / delete (delete recomputes balances + logs to the activity feed).
+- TDD: `filterAndSort` (8 tests) + a new engine helper `unpaidExpenseIds` (4 tests) that threads the
+  source expense id through FIFO so the paid/unpaid filter is principled. 103 tests, build, lint, tsc ✓.
+- Reused the dashboard's enriched-ledger fetch (exported it) instead of duplicating the query.
 
 ### 2026-06-03 — Phase 6 · Recurring payments (in review)
 - TDD'd the recurrence scheduler (`schedule.ts`, 10 tests): next-due period, anchor-day clamping to
