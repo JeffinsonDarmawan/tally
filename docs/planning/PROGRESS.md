@@ -7,23 +7,34 @@
 
 ## Current state
 
-- **Phase:** **Phase 5 (Settle up, reminders, activity & notifications) — in review.** Phases 0–4
-  merged (PRs #3, #4, #6, #7, #8).
+- **Phase:** **Phase 6 (Recurring payments) — in review.** Phases 0–5 merged (PRs #3, #4, #6, #7, #8, #9).
 - **Repo:** `tally` (public, GitHub) · integration branch `main`.
-- **App:** balances are now **actionable** — tap a friend to settle up (partial/full/overpayment),
-  remind a debtor (notification + copyable message), and read the group **activity feed** +
-  **notifications** via the header bell. 81 unit tests green.
-- **Backend:** **live** (owner connected Supabase). Settlements, activity_log, and notifications all
-  write through RLS.
+- **App:** recurring templates with **confirm-before-post** — due periods prompt on the recurring page
+  and dashboard; fixed confirm fast, variable requires a real amount; future periods never post.
+  91 unit tests green (incl. a 10-test scheduler).
+- **Backend:** **live** (owner connected Supabase). 7 of the 10 phases done.
 
 ## Next up
 
-1. **Review Phase 5** (PR open) — testable live. After merge → **Phase 6 — Recurring payments**
-   (templates; confirm-before-post; variable bills require a real amount; backlog/anchor rules).
+1. **Review Phase 6** (PR open) — testable live. After merge → **Phase 7 — History page**
+   (full list with search, filter, sort, and bulk select → recategorize/delete).
 
 ---
 
 ## Log
+
+### 2026-06-03 — Phase 6 · Recurring payments (in review)
+- TDD'd the recurrence scheduler (`schedule.ts`, 10 tests): next-due period, anchor-day clamping to
+  short months, end-date handling, and the no-future-posting rule (catch-up one period at a time).
+- Template CRUD + confirm (builds a real expense from the template's split config + confirmed amount,
+  links `recurring_template_id`, advances the period) + skip (advances without posting). Editing a
+  template affects future instances only.
+- Recurring page (list + create/edit form: frequency, fixed/variable, dates, monthly anchor day,
+  involved + equal/shares/percentage split) and pending prompts on the recurring page + dashboard
+  (fixed = one tap; variable requires the real amount).
+- `createExpense` gained an optional `recurring_template_id`. Verified: 91 tests, build, lint, tsc ✓.
+- Scope note: recurring splits offer equal/shares/percentage (they scale with a variable amount);
+  by-item/uneven aren't offered for templates (use a one-off expense).
 
 ### 2026-06-03 — Phase 5 · Settle up, reminders, activity & notifications (in review)
 - Settle-up sheet (tap a friend on the dashboard): record a repayment in either direction, prefilled

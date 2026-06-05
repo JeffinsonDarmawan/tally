@@ -12,6 +12,19 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Added — Phase 6: Recurring payments
+- **Recurring templates** (brief §10): name, category, default payer, frequency
+  (weekly / 2-weekly / monthly / yearly), **fixed or variable** amount, start/end dates, monthly
+  anchor-day, and an equal / weighted-shares / percentage split. Full create / edit / delete.
+- **Never posts the future.** A pure, unit-tested scheduler (10 tests) computes when a period has
+  *come due* — clamping the anchor day to short months (31st → 28/29), respecting end dates, and
+  catching up one period at a time. Future periods never touch balances.
+- **Confirm-before-post.** Due periods surface as **pending prompts** on the recurring page *and*
+  the dashboard. **Fixed** → amount prefilled, one tap. **Variable** → you must enter the real
+  amount. Confirming posts a real expense (linked to the template) and advances the period; **Skip**
+  advances without posting. Editing a template affects future instances only.
+- `createExpense` now accepts a `recurring_template_id`; reuses the engine + expense builder.
+
 ### Added — Phase 5: Settle up, reminders, activity & notifications
 - **Settle up** — tap a friend on the dashboard to record a repayment (brief §11): pick direction,
   amount (prefilled to the outstanding), date, note. **Partial, full, and overpayment-as-credit** are

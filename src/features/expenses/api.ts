@@ -116,6 +116,7 @@ export async function createExpense(
   userId: string,
   draft: ExpenseDraft,
   built: BuiltExpense,
+  recurringTemplateId?: string,
 ): Promise<string> {
   const { data: exp, error } = await supabase
     .from('expenses')
@@ -130,6 +131,7 @@ export async function createExpense(
       extra_charges: built.expense.extra_charges as unknown as Json,
       note: built.expense.note,
       receipt_url: built.expense.receipt_url,
+      recurring_template_id: recurringTemplateId ?? null,
       created_by: userId,
     })
     .select('id')

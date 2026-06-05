@@ -15,8 +15,8 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 | 2 | Schema & balance engine (unit-tested) | ✅ |
 | 3 | Add Expense flow | ✅ |
 | 4 | Dashboard | ✅ |
-| 5 | Settle up, reminders, activity log & notifications | 🟡 in review |
-| 6 | Recurring payments | ⬜ |
+| 5 | Settle up, reminders, activity log & notifications | ✅ |
+| 6 | Recurring payments | 🟡 in review |
 | 7 | History page | ⬜ |
 | 8 | Summary pages | ⬜ |
 | 9 | Polish & deploy | ⬜ |
