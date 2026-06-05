@@ -12,6 +12,16 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Added — Phase 8: Summary pages
+- A visual **month / year** report (brief §9) with a period selector: headline **total spent /
+  transactions / your net**, a **category donut** (with the period total at its center), a spending
+  **timeline** (days in a month, months in a year), a **who-paid** breakdown, a **settled vs
+  outstanding** bar, and **top expenses** — all via Recharts styled to the dark tokens.
+- **Export** the current period as **CSV** (transactions) and **PDF** (one-page summary), client-side.
+- Designed empty state for periods with no spend.
+- Pure, unit-tested `summarizeReport` (7 tests). The Summary route is **lazy-loaded** so Recharts +
+  jsPDF stay out of the initial bundle (initial JS ~1.35 MB → ~600 KB).
+
 ### Added — Phase 7: History page
 - The History page is now a full ledger browser (brief §12): **search** (notes + categories),
   **filters** (status outstanding/settled, category, member, date range, amount range), and **sort**

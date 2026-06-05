@@ -7,21 +7,30 @@
 
 ## Current state
 
-- **Phase:** **Phase 7 (History page) — in review.** Phases 0–6 merged (#3, #4, #6, #7, #8, #9, #10);
-  receipt-attach removed (#11) and a demo-members seed script added (#12).
+- **Phase:** **Phase 8 (Summary pages) — in review.** Phases 0–7 merged (#3, #4, #6, #7, #8, #9, #10,
+  #13); receipt-attach removed (#11), demo-members seed added (#12).
 - **Repo:** `tally` (public, GitHub) · integration branch `main`.
-- **App:** History is a full ledger browser — search, filters (status/category/member/date/amount),
-  sort, and bulk select → recategorize/delete. 103 unit tests green.
-- **Backend:** **live** (owner connected Supabase). 8 of the 10 phases done.
+- **App:** Summary is a visual month/year report (donut, timeline, who-paid, settled-vs-pending, top
+  expenses) with CSV + PDF export. Lazy-loaded to keep the initial bundle small. 110 unit tests green.
+- **Backend:** **live** (owner connected Supabase). 9 of the 10 phases done — only Phase 9 left.
 
 ## Next up
 
-1. **Review Phase 7** (PR open) — testable live. After merge → **Phase 8 — Summary pages**
-   (month/year charts: category donut, who-paid, timeline, settled-vs-pending; CSV + PDF export).
+1. **Review Phase 8** (PR open) — testable live. After merge → **Phase 9 — Polish & deploy**
+   (empty/loading/error sweep, finalize the installable PWA, a11y pass, responsive pass, deploy to
+   Vercel + Supabase, complete the README).
 
 ---
 
 ## Log
+
+### 2026-06-05 — Phase 8 · Summary pages (in review)
+- Visual month/year report: header figures, category donut (total at center), spending timeline,
+  who-paid bars, settled-vs-outstanding bar, top expenses — Recharts styled to the dark tokens.
+- CSV (transactions) + PDF (one-page summary) export, client-side (jsPDF). Designed empty state.
+- TDD'd `summarizeReport` (7 tests): period bounds, totals, by-category, who-paid, timeline, top.
+- Lazy-loaded the Summary route → initial JS bundle ~1.35 MB → ~600 KB (recharts/jspdf split out).
+- Added `recharts` + `jspdf`. 110 tests, build, lint, tsc ✓.
 
 ### 2026-06-05 — Phase 7 · History page (in review)
 - Full ledger browser: search (notes + categories), filters (status outstanding/settled, category,
