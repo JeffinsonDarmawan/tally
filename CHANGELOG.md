@@ -12,6 +12,16 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Added — Phase 9: Polish & deploy
+- **Accessibility:** the Modal now **traps focus** while open, focuses the first control (respecting
+  any `autoFocus`), and **returns focus to the trigger** on close — finishing the deferred a11y items.
+- **Installable PWA:** generated proper **PNG app icons** (192 / 512 / maskable / apple-touch) and an
+  **offline app shell** (Workbox `navigateFallback` to `index.html`). A `scripts/generate-icons.mjs`
+  regenerates them from the source glyph.
+- **Deploy ready:** added `vercel.json` (SPA rewrite so deep links survive refresh) and a full
+  **Deploy** section in the README (Vercel import + env vars + Supabase redirect URLs).
+- Refreshed the README for the finished app (status, stack, layout, scripts, deploy).
+
 ### Added — Phase 8: Summary pages
 - A visual **month / year** report (brief §9) with a period selector: headline **total spent /
   transactions / your net**, a **category donut** (with the period total at its center), a spending
