@@ -1,6 +1,7 @@
 import { useAuth, LoginPage } from '@/features/auth'
 import { useGroup, OnboardingPage } from '@/features/group'
 import { ExpenseSheetProvider } from '@/features/expenses'
+import { SettleSheetProvider } from '@/features/settlements'
 import { AppRoutes } from './router'
 import { Splash, SplashError } from './Splash'
 
@@ -24,7 +25,9 @@ function GroupGate() {
   if (status === 'no-group') return <OnboardingPage />
   return (
     <ExpenseSheetProvider>
-      <AppRoutes />
+      <SettleSheetProvider>
+        <AppRoutes />
+      </SettleSheetProvider>
     </ExpenseSheetProvider>
   )
 }

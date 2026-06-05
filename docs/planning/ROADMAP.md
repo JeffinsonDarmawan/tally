@@ -14,8 +14,8 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 | 1 | Auth, members & categories | ✅ |
 | 2 | Schema & balance engine (unit-tested) | ✅ |
 | 3 | Add Expense flow | ✅ |
-| 4 | Dashboard | 🟡 in review |
-| 5 | Settle up, reminders, activity log & notifications | ⬜ |
+| 4 | Dashboard | ✅ |
+| 5 | Settle up, reminders, activity log & notifications | 🟡 in review |
 | 6 | Recurring payments | ⬜ |
 | 7 | History page | ⬜ |
 | 8 | Summary pages | ⬜ |

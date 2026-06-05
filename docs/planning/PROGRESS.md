@@ -7,22 +7,36 @@
 
 ## Current state
 
-- **Phase:** **Phase 4 (Dashboard) — in review.** Phases 0–3 merged (PRs #3, #4, #6, #7).
+- **Phase:** **Phase 5 (Settle up, reminders, activity & notifications) — in review.** Phases 0–4
+  merged (PRs #3, #4, #6, #7, #8).
 - **Repo:** `tally` (public, GitHub) · integration branch `main`.
-- **App:** the dashboard shows **real engine balances** (net hero, owed/owe tiles, unpaid stat,
-  per-friend with days-unpaid, Detailed⇄Simplified toggle, this-month activity). 76 unit tests green.
-- **Backend:** **live** — the owner connected Supabase (`.env` set locally, gitignored); the 5 can
-  sign in, form the group, and add expenses for real. Optional `receipts` bucket still available.
+- **App:** balances are now **actionable** — tap a friend to settle up (partial/full/overpayment),
+  remind a debtor (notification + copyable message), and read the group **activity feed** +
+  **notifications** via the header bell. 81 unit tests green.
+- **Backend:** **live** (owner connected Supabase). Settlements, activity_log, and notifications all
+  write through RLS.
 
 ## Next up
 
-1. **Review Phase 4** (PR open) — now viewable live in the browser. After merge → **Phase 5 —
-   Settle up, reminders, activity log & notifications** (record repayments; the per-friend rows
-   become the entry point to settle up).
+1. **Review Phase 5** (PR open) — testable live. After merge → **Phase 6 — Recurring payments**
+   (templates; confirm-before-post; variable bills require a real amount; backlog/anchor rules).
 
 ---
 
 ## Log
+
+### 2026-06-03 — Phase 5 · Settle up, reminders, activity & notifications (in review)
+- Settle-up sheet (tap a friend on the dashboard): record a repayment in either direction, prefilled
+  to the outstanding; partial/full/overpayment-as-credit; writes `settlements`, logs `settlement.created`,
+  notifies the other party. Balances update symmetrically via the engine on reload.
+- Reminders: one-tap "Remind" on a debtor → in-app notification + a friendly, prefilled message copied
+  to the clipboard; logged `reminder.sent`. TDD'd `settleDefault` + `reminderMessage` (5 tests).
+- Activity feed + in-app notifications: a header bell with an unread badge opens an inbox with
+  Notifications and Activity tabs (mark-read on open). New `activity` + `notifications` features own the
+  log/notify write-helpers (moved out of `expenses`, which now imports them).
+- Verified: 81 tests, build, lint, tsc ✓. Live-testable (Supabase connected).
+- Deferred (as planned): the simplify-debts toggle already shipped in Phase 4; pending-recurring
+  prompts → Phase 6; richer per-expense paid/unpaid badges → later polish.
 
 ### 2026-06-03 — Phase 4 · Dashboard (in review)
 - Replaced the Overview's sample data with real engine output: net hero, owed/owe tiles, unpaid stat,

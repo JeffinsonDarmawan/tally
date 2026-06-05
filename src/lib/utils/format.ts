@@ -39,3 +39,16 @@ export function formatDate(iso: string): string {
   if (Number.isNaN(d.getTime())) return iso
   return d.toLocaleDateString('en-SG', { day: 'numeric', month: 'short' })
 }
+
+/** Short date + time from an ISO timestamp (e.g. "1 Jun, 3:45 pm"). */
+export function formatTimestamp(iso: string): string {
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return iso
+  return d.toLocaleString('en-SG', {
+    day: 'numeric',
+    month: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+}

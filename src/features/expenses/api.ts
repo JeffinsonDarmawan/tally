@@ -1,7 +1,8 @@
 import { supabase } from '@/lib/supabase/client'
 import type { Json, SplitMethod } from '@/types/database.types'
 import type { BuiltExpense, DraftCharge, DraftItem, DraftPayer, ExpenseDraft } from './build'
-import { logActivity, notifyUsers } from './activity'
+import { logActivity } from '@/features/activity'
+import { notifyUsers } from '@/features/notifications'
 
 /** A row for the expense list (history). */
 export interface ExpenseListItem {

@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils/cn'
 import { APP_NAME } from '@/config'
 import { Button } from '@/components/ui'
 import { useExpenseSheet } from '@/features/expenses'
+import { NotificationBell } from '@/features/notifications'
 
 interface NavItem {
   to: string
@@ -50,11 +51,14 @@ export function AppShell() {
     <div className="min-h-[100dvh] bg-base">
       {/* ===== Desktop sidebar ===== */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-hairline bg-surface/40 px-4 py-6 lg:flex">
-        <div className="flex items-center gap-2.5 px-2">
-          <span className="squircle grid size-9 place-items-center bg-elevated text-accent">
-            <Logo className="size-6" />
-          </span>
-          <span className="text-lg font-semibold tracking-tight">{APP_NAME}</span>
+        <div className="flex items-center justify-between px-2">
+          <div className="flex items-center gap-2.5">
+            <span className="squircle grid size-9 place-items-center bg-elevated text-accent">
+              <Logo className="size-6" />
+            </span>
+            <span className="text-lg font-semibold tracking-tight">{APP_NAME}</span>
+          </div>
+          <NotificationBell />
         </div>
 
         <nav aria-label="Primary" className="mt-8 flex flex-1 flex-col gap-1">
@@ -102,14 +106,17 @@ export function AppShell() {
           </span>
           <span className="font-semibold tracking-tight">{APP_NAME}</span>
         </div>
-        <button
-          type="button"
-          onClick={() => navigate('/settings')}
-          aria-label="Settings"
-          className="grid size-9 place-items-center rounded-xl text-subtle transition-colors hover:bg-elevated hover:text-ink"
-        >
-          <IconSettings className="size-5" stroke={2} />
-        </button>
+        <div className="flex items-center gap-1">
+          <NotificationBell />
+          <button
+            type="button"
+            onClick={() => navigate('/settings')}
+            aria-label="Settings"
+            className="grid size-9 place-items-center rounded-xl text-subtle transition-colors hover:bg-elevated hover:text-ink"
+          >
+            <IconSettings className="size-5" stroke={2} />
+          </button>
+        </div>
       </header>
 
       {/* ===== Main content ===== */}
