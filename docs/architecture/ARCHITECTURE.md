@@ -23,7 +23,7 @@ Realtime, and the React app is a static bundle hosted on Vercel.
 │  │ Data layer: supabase-js client + queries │  │ ◀────▶ │  │ (canonical ledger)    │  │
 │  └───────────────┬─────────────────────────┘  │ Realtime└───────────────────────┘  │
 │  ┌───────────────▼─────────────────────────┐  │        │  ┌───────────────────────┐  │
-│  │ Balance engine (PURE, unit-tested TS)    │  │        │  │ Storage (receipts)    │  │
+│  │ Balance engine (PURE, unit-tested TS)    │  │        │  │ Storage (unused in v1)│  │
 │  └─────────────────────────────────────────┘  │        │  └───────────────────────┘  │
 └──────────────────────────────────────────────┘         └─────────────────────────────┘
         host: Vercel (static frontend)                          host: Supabase cloud
@@ -71,6 +71,6 @@ depends on the save path persisting exact, reconciled rows.
 
 ## What's deliberately NOT here (v1)
 
-Multi-currency, multiple groups in the UI, receipt OCR, complex permission roles, and
-PayNow/QR settle-up — see `PROJECT_BRIEF.md` §14. No custom server: keeping it client + Supabase
+Multi-currency, multiple groups in the UI, receipt capture/OCR (removed — ADR-0007), complex
+permission roles, and PayNow/QR settle-up — see `PROJECT_BRIEF.md` §14. No custom server: keeping it client + Supabase
 is what makes the app free to run at this scale.

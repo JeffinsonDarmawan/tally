@@ -16,8 +16,12 @@ records the intent so it isn't lost. Newest/most-wanted near the top.
 
 ---
 
-## B1 — Receipt-photo OCR → auto-itemise
+## B1 — Receipt-photo capture (attach, then OCR → auto-itemise)
 **Status:** Proposed · 2026-05-31 · requested by the owner.
+
+> Note (2026-06-03): the basic **attach-a-photo** option was **removed from v1** to avoid Supabase
+> Storage cost/setup for a 5-person group (see ADR-0007). Re-introducing capture is the precursor to
+> the OCR idea below; the nullable `expenses.receipt_url` column is still in place for it.
 
 **What:** When adding an expense, let me **photograph a bill/receipt** and have the app **read the
 line items and prices automatically**, pre-filling the **by-item** split so I don't type each item.

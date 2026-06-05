@@ -1,12 +1,4 @@
-import { IconPaperclip, IconX } from '@tabler/icons-react'
-import {
-  Avatar,
-  CategoryTile,
-  Field,
-  Input,
-  MoneyInput,
-  Toggle,
-} from '@/components/ui'
+import { Avatar, CategoryTile, Field, Input, MoneyInput, Toggle } from '@/components/ui'
 import { cn } from '@/lib/utils/cn'
 import { formatMoney, parseMoney } from '@/lib/utils/format'
 import type { Category, Profile } from '@/types/database.types'
@@ -37,16 +29,10 @@ export function BasicsStep({
   form,
   set,
   categories,
-  receiptName,
-  onPickReceipt,
-  onClearReceipt,
 }: {
   form: FormState
   set: SetForm
   categories: Category[]
-  receiptName: string | null
-  onPickReceipt: (file: File) => void
-  onClearReceipt: () => void
 }) {
   return (
     <div className="space-y-5">
@@ -105,38 +91,6 @@ export function BasicsStep({
           value={form.note}
           onChange={(e) => set({ note: e.target.value })}
         />
-      </Field>
-
-      <Field label="Receipt">
-        {receiptName ? (
-          <div className="flex items-center gap-2 rounded-xl border border-hairline bg-elevated px-3 py-2 text-sm">
-            <IconPaperclip className="size-4 text-faint" stroke={2} />
-            <span className="flex-1 truncate text-ink">{receiptName}</span>
-            <button
-              type="button"
-              onClick={onClearReceipt}
-              aria-label="Remove receipt"
-              className="grid size-6 place-items-center rounded-lg text-faint hover:bg-surface hover:text-ink"
-            >
-              <IconX className="size-4" stroke={2} />
-            </button>
-          </div>
-        ) : (
-          <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-hairline bg-elevated px-3 py-2.5 text-sm text-subtle transition-colors hover:text-ink">
-            <IconPaperclip className="size-4" stroke={2} />
-            Attach a photo (optional)
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0]
-                if (file) onPickReceipt(file)
-                e.target.value = ''
-              }}
-            />
-          </label>
-        )}
       </Field>
     </div>
   )

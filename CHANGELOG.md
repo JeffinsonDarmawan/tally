@@ -12,6 +12,12 @@ this file is the curated, human-readable summary.
 
 ## [Unreleased]
 
+### Changed
+- **Removed the receipt-photo attach option** from the Add-Expense flow (and the Supabase Storage
+  helper + bucket setup). For a 5-person group it added Storage cost and a confusing failure mode;
+  receipt capture is deferred to the backlog. The nullable `expenses.receipt_url` column remains so
+  it can return without a migration (ADR-0007).
+
 ### Added — Phase 6: Recurring payments
 - **Recurring templates** (brief §10): name, category, default payer, frequency
   (weekly / 2-weekly / monthly / yearly), **fixed or variable** amount, start/end dates, monthly

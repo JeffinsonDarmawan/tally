@@ -13,7 +13,7 @@
 
 - **Net balance at a glance** — always from *your* perspective ("you're owed" / "you owe").
 - **Add expenses** five ways — by item (with tax/tip auto-split), equal, uneven/exact,
-  weighted shares, and percentage — with one or multiple payers and an optional receipt photo.
+  weighted shares, and percentage — with one or multiple payers.
 - **Settle up** — record repayments (partial, full, overpayment-as-credit) that update both
   sides symmetrically, with FIFO "days unpaid" tracking.
 - **Recurring payments** done right — pending bills are *confirmed before posting* (variable
