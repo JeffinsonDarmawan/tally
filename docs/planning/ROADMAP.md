@@ -17,8 +17,8 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 | 4 | Dashboard | ✅ |
 | 5 | Settle up, reminders, activity log & notifications | ✅ |
 | 6 | Recurring payments | ✅ |
-| 7 | History page | 🟡 in review |
-| 8 | Summary pages | ⬜ |
+| 7 | History page | ✅ |
+| 8 | Summary pages | 🟡 in review |
 | 9 | Polish & deploy | ⬜ |
 
 ---
