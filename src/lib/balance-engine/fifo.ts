@@ -7,11 +7,14 @@ import type { ExpenseSides, SettlementInput } from './balances'
 export interface DatedDebt {
   date: string // ISO date (YYYY-MM-DD)
   amountCents: number
+  /** The source expense id, when known (used for the History paid/unpaid filter). */
+  id?: string
 }
 
-/** An expense plus the date it occurred. */
+/** An expense plus the date it occurred (and optionally its id). */
 export interface DatedExpense extends ExpenseSides {
   date: string
+  id?: string
 }
 
 /**
@@ -27,7 +30,7 @@ export function fifoUnpaid(items: DatedDebt[], reductionCents: number): DatedDeb
     if (remaining >= item.amountCents) {
       remaining -= item.amountCents
     } else {
-      out.push({ date: item.date, amountCents: item.amountCents - remaining })
+      out.push({ date: item.date, amountCents: item.amountCents - remaining, id: item.id })
       remaining = 0
     }
   }
@@ -50,7 +53,7 @@ function directedEdges(expenses: DatedExpense[], from: string, to: string): Date
   for (const e of expenses) {
     for (const edge of expenseEdges(e.paid, e.owed)) {
       if (edge.from === from && edge.to === to) {
-        items.push({ date: e.date, amountCents: edge.amountCents })
+        items.push({ date: e.date, amountCents: edge.amountCents, id: e.id })
       }
     }
   }
@@ -94,4 +97,29 @@ export function pairUnpaid(
 export function daysUnpaid(items: DatedDebt[], today: string): number | null {
   if (items.length === 0) return null
   return daysBetween(items[0].date, today)
+}
+
+/**
+ * The set of expense ids that still have an unpaid edge involving `me` (after FIFO + settlements).
+ * Powers the History "outstanding / settled" filter. Expenses must carry an `id`.
+ */
+export function unpaidExpenseIds(
+  me: string,
+  expenses: DatedExpense[],
+  settlements: SettlementInput[],
+): Set<string> {
+  const members = new Set<string>()
+  for (const e of expenses) {
+    for (const u of Object.keys(e.paid)) members.add(u)
+    for (const u of Object.keys(e.owed)) members.add(u)
+  }
+  members.delete(me)
+
+  const ids = new Set<string>()
+  for (const friend of members) {
+    for (const item of pairUnpaid(me, friend, expenses, settlements).items) {
+      if (item.id) ids.add(item.id)
+    }
+  }
+  return ids
 }
