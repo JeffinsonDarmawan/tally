@@ -23,6 +23,7 @@ import { useGroup } from '@/features/group'
 import { useCategories } from '@/features/categories'
 import { useExpenseSheet } from '@/features/expenses'
 import { useSettleSheet } from '@/features/settlements'
+import { PendingRecurring, useRecurring } from '@/features/recurring'
 import { useDashboard } from './useDashboard'
 import type { ActivityItem, FriendBalance } from './summarize'
 
@@ -35,6 +36,7 @@ export function OverviewPage() {
   const categoriesById = useMemo(() => Object.fromEntries(categories.map((c) => [c.id, c])), [categories])
 
   const { summary, status, error, reload } = useDashboard(group?.id, me, memberIds)
+  const { pending, reload: reloadRecurring } = useRecurring(group?.id)
   const { openAdd, openEdit } = useExpenseSheet()
   const { openSettle } = useSettleSheet()
   const navigate = useNavigate()
@@ -195,6 +197,15 @@ export function OverviewPage() {
           </Card>
         )}
       </section>
+
+      {/* Pending recurring prompts */}
+      <PendingRecurring
+        pending={pending}
+        onChanged={() => {
+          void reloadRecurring()
+          void reload()
+        }}
+      />
 
       {/* This month's activity */}
       <section className="reveal" style={{ animationDelay: '200ms' }}>
