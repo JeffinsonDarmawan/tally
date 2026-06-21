@@ -1,7 +1,10 @@
-import { useEffect, useId, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { IconX } from '@tabler/icons-react'
 import { cn } from '@/lib/utils/cn'
+
+const FOCUSABLE =
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 export interface ModalProps {
   open: boolean
@@ -15,22 +18,62 @@ export interface ModalProps {
 
 /**
  * Modal that presents as a bottom sheet on mobile and a centered dialog on desktop.
- * The container for the multi-step flows (Add Expense, Settle up).
- *
- * TODO(Phase 9 a11y): add a focus trap, focus the first control on open, and return
- * focus to the trigger on close. Tracked in docs/planning/ROADMAP.md (Phase 9).
+ * The container for the multi-step flows (Add Expense, Settle up). Traps focus while open,
+ * focuses the first control (unless the content sets autoFocus), and returns focus on close.
  */
 export function Modal({ open, onClose, title, footer, children, className }: ModalProps) {
   const titleId = useId()
+  const panelRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     if (!open) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    const previouslyFocused = document.activeElement as HTMLElement | null
+
+    const focusable = () =>
+      Array.from(panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []).filter(
+        (el) => el.offsetParent !== null,
+      )
+
+    // Initial focus (skip if content already auto-focused something inside the panel).
+    const raf = requestAnimationFrame(() => {
+      if (panelRef.current?.contains(document.activeElement)) return
+      ;(focusable()[0] ?? panelRef.current)?.focus()
+    })
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const items = focusable()
+      if (items.length === 0) {
+        e.preventDefault()
+        panelRef.current?.focus()
+        return
+      }
+      const first = items[0]
+      const last = items[items.length - 1]
+      const active = document.activeElement
+      const outside = !panelRef.current?.contains(active)
+      if (e.shiftKey && (active === first || outside)) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && (active === last || outside)) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
     document.addEventListener('keydown', onKey)
-    const prev = document.body.style.overflow
+    const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+
     return () => {
+      cancelAnimationFrame(raf)
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prev
+      document.body.style.overflow = prevOverflow
+      previouslyFocused?.focus?.()
     }
   }, [open, onClose])
 
@@ -53,8 +96,10 @@ export function Modal({ open, onClose, title, footer, children, className }: Mod
       />
       {/* Panel — bottom sheet on mobile, dialog on desktop */}
       <div
+        ref={panelRef}
+        tabIndex={-1}
         className={cn(
-          'relative z-10 mt-auto flex max-h-[92dvh] w-full flex-col bg-surface shadow-pop',
+          'relative z-10 mt-auto flex max-h-[92dvh] w-full flex-col bg-surface shadow-pop focus:outline-none',
           'rounded-t-3xl sm:mt-0 sm:max-h-[88dvh] sm:max-w-lg sm:rounded-card-lg',
           'motion-safe:animate-[reveal_0.2s_var(--ease-out-soft)]',
           className,

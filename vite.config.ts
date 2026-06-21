@@ -11,7 +11,13 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+      workbox: {
+        // Offline app shell: navigations fall back to the cached index.html (brief §9 / §12).
+        navigateFallback: '/index.html',
+        globPatterns: ['**/*.{js,css,html,woff2,svg,png,webmanifest}'],
+        cleanupOutdatedCaches: true,
+      },
       manifest: {
         name: 'Tally',
         short_name: 'Tally',
@@ -21,7 +27,9 @@ export default defineConfig({
         display: 'standalone',
         start_url: '/',
         icons: [
-          { src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' },
+          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'pwa-maskable-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       devOptions: {

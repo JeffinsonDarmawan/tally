@@ -4,8 +4,9 @@
 > whom, mark debts as paid, and review past spending. Think Splitwise / Splid / Tricount,
 > tailored to exactly how we settle up.
 
-[![Status](https://img.shields.io/badge/status-foundation-9C9CF0)](docs/planning/PROGRESS.md)
-[![Phase](https://img.shields.io/badge/phase-0%20pending-6B6B74)](docs/planning/ROADMAP.md)
+[![Status](https://img.shields.io/badge/status-feature--complete-74E0A2)](docs/planning/ROADMAP.md)
+[![Tests](https://img.shields.io/badge/tests-110%20passing-74E0A2)](src/lib/balance-engine)
+[![PWA](https://img.shields.io/badge/PWA-installable-9C9CF0)](#-getting-started)
 
 ---
 
@@ -29,17 +30,17 @@ See the full specification in [`docs/planning/PROJECT_BRIEF.md`](docs/planning/P
 
 | Layer | Choice |
 |---|---|
-| Frontend | React + TypeScript + Vite |
-| Styling | Tailwind CSS (custom dark design tokens) |
+| Frontend | React 19 + TypeScript + Vite |
+| Styling | Tailwind CSS v4 (custom dark design tokens) |
 | Routing | react-router |
-| Charts | Recharts |
-| Dates | date-fns |
-| Export | client-side (jsPDF + CSV helper) |
-| PWA | vite-plugin-pwa |
-| Backend / DB / Auth / Storage | Supabase (Postgres + Auth + RLS + Storage) |
+| Charts | Recharts (lazy-loaded on the Summary route) |
+| Export | client-side — jsPDF + a tiny CSV helper |
+| PWA | vite-plugin-pwa (installable, offline app shell) |
+| Backend / DB / Auth | Supabase (Postgres + Auth + Row-Level Security) |
 | Hosting | Vercel (frontend) + Supabase |
 
-**Cost at 5 users: effectively $0.** Single currency for v1.
+**Cost at 5 users: effectively $0.** Single currency for v1. The balance engine is a pure,
+unit-tested TypeScript module (`src/lib/balance-engine/`) — no money math lives in components.
 
 ## 📁 Repository layout
 
@@ -48,7 +49,8 @@ tally/
 ├── README.md                  ← you are here
 ├── CHANGELOG.md               ← human-readable record of notable changes
 ├── .gitignore  .editorconfig  ← tooling / hygiene
-├── .github/                   ← PR template (CI workflows land in Phase 9)
+├── .github/                   ← PR template
+├── vercel.json                ← SPA rewrite for deployment
 ├── docs/                      ← all planning & reference docs (start here for context)
 │   ├── README.md              ← documentation index
 │   ├── GIT_WORKFLOW.md        ← branching & PR conventions
@@ -60,20 +62,20 @@ tally/
 │   ├── architecture/
 │   │   ├── ARCHITECTURE.md    ← system architecture overview
 │   │   └── FILE_ORGANIZATION.md ← the src/ layout we'll build + rationale
-│   └── database/
-│       ├── supabase_schema.sql ← the Postgres schema, RLS & helpers
-│       └── DATABASE.md        ← schema notes & setup steps
-└── src/ …                     ← (app code — created in Phase 0)
+│   ├── database/
+│   │   ├── supabase_schema.sql ← the Postgres schema, RLS & helpers
+│   │   └── DATABASE.md        ← schema notes & setup steps
+│   ├── SUPABASE_SETUP.md      ← one-time backend setup walkthrough
+│   └── dev/seed-demo-members.sql ← optional: seed demo members for testing
+└── src/
+    ├── app/                   ← providers, router, app shell, auth/group gate
+    ├── components/ui/         ← the design-system component kit
+    ├── features/             ← feature-sliced domains (auth, expenses, dashboard,
+    │                            settle-up, recurring, history, summary, …)
+    └── lib/balance-engine/   ← the pure, unit-tested balance engine
 ```
 
-> **The app code does not exist yet.** This repository currently holds the project
-> *foundation*: version control, documentation, and the planned architecture. The
-> application itself is built in reviewed phases — see the roadmap.
-
 ## 🚀 Getting started
-
-> These steps become runnable once **Phase 0 (scaffold)** lands. They're documented here so
-> the README is ready to go.
 
 **Prerequisites:** Node.js **24 LTS** (pinned in `.nvmrc`; `nvm use`), npm, and a free
 [Supabase](https://supabase.com) project. See [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md) for the
@@ -83,19 +85,34 @@ isolated-environment setup.
 # 0. Match the pinned Node version
 nvm install && nvm use        # reads .nvmrc → Node 24
 
-# 1. Install dependencies (after Phase 0 scaffolds package.json)
+# 1. Install dependencies
 npm install
 
-# 2. Configure environment
-cp .env.example .env          # then fill in your Supabase URL + anon key
+# 2. Set up the backend (one-time) — see docs/SUPABASE_SETUP.md
+#    Create a Supabase project, run docs/database/supabase_schema.sql in the SQL editor,
+#    and set the magic-link Site/Redirect URLs to http://localhost:5173
 
-# 3. Set up the backend (one-time)
-#    Follow docs/SUPABASE_SETUP.md: create a project, run docs/database/supabase_schema.sql,
-#    configure the magic-link redirect URLs, and copy your URL + anon key into .env
+# 3. Configure environment
+cp .env.example .env          # fill in VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY
 
-# 4. Run the dev server
-npm run dev
+# 4. Run it
+npm run dev                   # http://localhost:5173
 ```
+
+**Scripts:** `npm run dev` · `npm run build` · `npm run test` (Vitest) · `npm run lint` · `npm run typecheck`.
+
+Want data to play with? Run [`docs/dev/seed-demo-members.sql`](docs/dev/seed-demo-members.sql) to add
+four demo members to your group.
+
+## ☁️ Deploy (Vercel + Supabase)
+
+1. **Import the repo into [Vercel](https://vercel.com)** — it auto-detects Vite (build `npm run build`,
+   output `dist`). `vercel.json` adds the SPA rewrite so deep links survive a refresh.
+2. **Add environment variables** in the Vercel project (Production): `VITE_SUPABASE_URL` and
+   `VITE_SUPABASE_ANON_KEY` (the anon key — never the service-role key).
+3. **Point Supabase auth at the deployed domain:** Supabase → Authentication → URL Configuration →
+   add your Vercel URL (e.g. `https://tally-xxxx.vercel.app`) to **Site URL** and **Redirect URLs**.
+4. Deploy. Each of the five signs in with a magic link and installs the PWA from their browser.
 
 ## 🌿 Contributing workflow
 

@@ -7,22 +7,31 @@
 
 ## Current state
 
-- **Phase:** **Phase 8 (Summary pages) — in review.** Phases 0–7 merged (#3, #4, #6, #7, #8, #9, #10,
-  #13); receipt-attach removed (#11), demo-members seed added (#12).
+- **Phase:** **Phase 9 (Polish & deploy) — in review.** Phases 0–8 merged (#3, #4, #6, #7, #8, #9,
+  #10, #13, #14); receipt-attach removed (#11), demo-members seed added (#12).
 - **Repo:** `tally` (public, GitHub) · integration branch `main`.
-- **App:** Summary is a visual month/year report (donut, timeline, who-paid, settled-vs-pending, top
-  expenses) with CSV + PDF export. Lazy-loaded to keep the initial bundle small. 110 unit tests green.
-- **Backend:** **live** (owner connected Supabase). 9 of the 10 phases done — only Phase 9 left.
+- **App:** all 9 build phases of the app are implemented. Phase 9 adds the Modal focus trap, real PWA
+  icons + offline shell, `vercel.json`, and a deploy-ready README. 110 unit tests green.
+- **Backend:** **live** (owner connected Supabase). **Last step: deploy** to Vercel (needs the owner's
+  Vercel account + pointing Supabase redirect URLs at the deployed domain).
 
 ## Next up
 
-1. **Review Phase 8** (PR open) — testable live. After merge → **Phase 9 — Polish & deploy**
-   (empty/loading/error sweep, finalize the installable PWA, a11y pass, responsive pass, deploy to
-   Vercel + Supabase, complete the README).
+1. **Review Phase 9** (PR open). After merge → **deploy** to Vercel (guided): import repo, set
+   `VITE_SUPABASE_*` env vars, add the Vercel URL to Supabase auth redirect URLs. Then v1 is done.
 
 ---
 
 ## Log
+
+### 2026-06-05 — Phase 9 · Polish & deploy (in review)
+- A11y: Modal focus trap + initial focus (respects `autoFocus`) + focus-return to the trigger.
+  (The two nav landmarks aren't a real dup — responsive `display:none` keeps one in the a11y tree.)
+- PWA: generated PNG icons (192/512/maskable/apple-touch) via `scripts/generate-icons.mjs` (sharp);
+  manifest now uses PNGs; Workbox `navigateFallback` gives an offline app shell.
+- Deploy prep: `vercel.json` SPA rewrite; README refreshed with stack/layout/scripts + a Deploy guide.
+- Verified: 110 tests, build (PWA precache 26 entries), lint, tsc ✓.
+- Remaining for v1 = the actual Vercel deploy (owner action), then update Supabase redirect URLs.
 
 ### 2026-06-05 — Phase 8 · Summary pages (in review)
 - Visual month/year report: header figures, category donut (total at center), spending timeline,
